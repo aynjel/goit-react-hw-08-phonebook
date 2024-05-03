@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 48px;
+  text-align: center;
+}
+
+.span {
+  color: #007bff;
+}
