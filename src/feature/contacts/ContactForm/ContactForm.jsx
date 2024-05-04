@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
-import PropTypes from 'prop-types';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from '../../../redux/contacts/contactSelectors';
+import { addContact } from '../../../redux/contacts/contactOperations';
+import Notiflix from 'notiflix';
 
-export const ContactForm = ({ addContact, contacts }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleNameChange = e => setName(e.target.value);
-  const handleNumberChange = e => setNumber(e.target.value);
+  const handleNameChange = e => {
+    setName(e.target.value);
+  };
+
+  const handleNumberChange = e => {
+    setNumber(e.target.value);
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
+
     if (name.trim() === '' || number.trim() === '') {
       return;
     }
@@ -21,18 +31,14 @@ export const ContactForm = ({ addContact, contacts }) => {
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
     if (existingContact) {
-      Notify.failure(`${name} is already in your contacts!`);
+      Notiflix.Notify.failure(`${name} is already in contacts.`);
       return;
-    } else {
-      Notify.success(`${name} is successfully added to your contacts!`);
     }
 
-    addContact({
-      id: nanoid(),
-      name: name.trim(),
-      number: number.trim(),
-    });
+    // dispatch(addContact({ name: name, number: number }));
+    dispatch(addContact({ name, number }));
 
+    // Reset Form Fields upon submitting
     setName('');
     setNumber('');
   };
@@ -69,15 +75,4 @@ export const ContactForm = ({ addContact, contacts }) => {
       </button>
     </form>
   );
-};
-
-ContactForm.propTypes = {
-  addContact: PropTypes.func.isRequired,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
 };

@@ -25,10 +25,14 @@ export const register = createAsyncThunk(
         password,
       });
       setAuthHeader(response.data.token);
-      Notiflix.Notify.success('Registered successfully');
+      Notiflix.Notify.success('Registered successfully', {
+        position: 'right-bottom',
+      });
       return response.data;
     } catch (error) {
-      Notiflix.Notify.failure(error.message);
+      Notiflix.Notify.failure(error.message, {
+        position: 'right-bottom',
+      });
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -43,10 +47,14 @@ export const login = createAsyncThunk(
         password,
       });
       setAuthHeader(response.data.token);
-      Notiflix.Notify.success('Logged in successfully');
+      Notiflix.Notify.success('Logged in successfully', {
+        position: 'right-bottom',
+      });
       return response.data;
     } catch (error) {
-      Notiflix.Notify.failure(error.message);
+      Notiflix.Notify.failure('Invalid credentials', {
+        position: 'right-bottom',
+      });
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -60,9 +68,13 @@ export const logOut = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
     await axios.post('/users/logout');
     clearAuthHeader();
-    Notiflix.Notify.success('Logged out successfully');
+    Notiflix.Notify.success('Logged out successfully', {
+      position: 'right-bottom',
+    });
   } catch (error) {
-    Notiflix.Notify.failure(error.message);
+    Notiflix.Notify.failure(error.message, {
+      position: 'right-bottom',
+    });
     return thunkAPI.rejectWithValue(error.message);
   }
 });
@@ -80,15 +92,18 @@ export const refreshUser = createAsyncThunk(
 
     if (persistedToken === null) {
       // If there is no token, exit without performing any request
-      Notiflix.Notify.failure('Unable to fetch user');
       return thunkAPI.rejectWithValue('Unable to fetch user');
     }
 
     try {
+      // If there is a token, add it to the HTTP header and perform the request
       setAuthHeader(persistedToken);
-      const response = await axios.get('/users/current');
-      return response.data;
+      const res = await axios.get('/users/current');
+      return res.data;
     } catch (error) {
+      Notiflix.Notify.failure(error.message, {
+        position: 'right-bottom',
+      });
       return thunkAPI.rejectWithValue(error.message);
     }
   }

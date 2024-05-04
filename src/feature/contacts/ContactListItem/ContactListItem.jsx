@@ -1,15 +1,15 @@
 import React from 'react';
 import css from './ContactListItem.module.css';
 import PropTypes from 'prop-types';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../../../redux/contacts/contactOperations';
 
-export const ContactListItem = ({ filteredContact, deleteContact }) => {
+export const ContactListItem = ({ filteredContact }) => {
+  const dispatch = useDispatch();
+
+  // handleDelete method
   const handleDelete = () => {
-    deleteContact(filteredContact.id);
-    Notify.success(
-      `${filteredContact.name} was successfully deleted from your contacts!`,
-      { position: 'center-top' }
-    );
+    dispatch(deleteContact(filteredContact.id));
   };
 
   return (
@@ -24,6 +24,9 @@ export const ContactListItem = ({ filteredContact, deleteContact }) => {
 };
 
 ContactListItem.propTypes = {
-  filteredContact: PropTypes.object.isRequired,
-  deleteContact: PropTypes.func.isRequired,
+  filteredContact: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
+  }),
 };

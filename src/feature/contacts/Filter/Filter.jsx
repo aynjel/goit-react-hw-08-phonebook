@@ -1,8 +1,16 @@
+import { useDispatch, useSelector } from 'react-redux';
 import css from './Filter.module.css';
-import PropTypes from 'prop-types';
+import { setFilter } from '../../../redux/filter/filterSlice';
+import { selectFilter } from '../../../redux/contacts/contactSelectors';
 
-export const Filter = ({ filter, setFilter }) => {
-  const handleFilterChange = e => setFilter(e.target.value);
+export const Filter = () => {
+  const dispatch = useDispatch();
+  const filter = useSelector(selectFilter);
+
+  //filter name based on the the search keyword
+  const handleFilterChange = e => {
+    dispatch(setFilter(e.target.value));
+  };
 
   return (
     <div className={css.divFilter}>
@@ -15,9 +23,4 @@ export const Filter = ({ filter, setFilter }) => {
       />
     </div>
   );
-};
-
-Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  setFilter: PropTypes.func.isRequired,
 };
